@@ -1,0 +1,38 @@
+version: "3.9"
+networks:
+  default:
+    driver: bridge
+
+  adguard-macvlan:
+    name: adguard-macvlan
+    driver: macvlan
+    enable_ipv6: true
+    driver_opts:
+      parent: ovs_eth1 # using ifconfig
+    ipam:
+      config:
+        - subnet: "192.168.31.0/24"    # 家用网络的网段
+          ip_range: "192.168.31.64/27" # 分配给容器的ip
+          gateway: "192.168.31.123"    # 家庭网络的网关
+        - subnet: "2408:::/64"
+
+services:
+  source-checker:
+    image: linweifu/tv_source_checker:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tv_source_checker
+    environment:
+      - PROXY_INFO=http://192.168.31.68:7890
+    volumes:
+      - ./src:/app
+    ports:
+     - "80:80/tcp"
+    networks:
+      adguard-macvlan:
+        ipv4_address: 192.168.31.4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "3m"
