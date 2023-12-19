@@ -161,4 +161,4 @@ cython_debug/
 
 
 www/
-settings.py
+src/settings.py
