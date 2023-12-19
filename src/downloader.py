@@ -4,7 +4,7 @@ version: 1.0
 Author: 
 Date: 2023-12-14 04:52:56
 LastEditors: linweifu
-LastEditTime: 2023-12-19 21:05:24
+LastEditTime: 2023-12-20 05:33:13
 '''
 import requests
 from urllib.parse import quote
@@ -113,15 +113,19 @@ def parse_mpeg(lines):
                     channel["port"] = 80
                 elif parsed_url.scheme == "https":
                     channel["port"] = 443
+                if hostchecker.is_ip_address(channel["host"]):
+                    channel["ip"] = channel["host"]
                     
-                ip = hostchecker.get_host_ip(channel["host"])
-                if ip:
-                    if hostchecker.is_localhost_ip(ip):
-                        logger.error(f"{channel_url} 域名解析为: localhost")
-                        continue
-                    all_channels.append(channel)
                 else:
+                    channel["ip"] = hostchecker.get_host_ip(channel["host"])
+
+                if channel["ip"] is None:
                     logger.error(f"{channel_url} 域名解析失败!")
+                elif hostchecker.is_localhost_ip(channel["ip"]):
+                    logger.error(f"{channel_url} 域名解析为: localhost")
+                else:
+                    all_channels.append(channel)
+                    
                 # logger.info(channel)
         i += 1
     if len(declare) == 0:

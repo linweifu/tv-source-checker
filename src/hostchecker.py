@@ -4,7 +4,7 @@ version: 1.0
 Author: 
 Date: 2023-12-14 19:36:30
 LastEditors: linweifu
-LastEditTime: 2023-12-19 21:05:46
+LastEditTime: 2023-12-20 05:34:19
 '''
 import logging
 import logging.config
@@ -23,6 +23,15 @@ def resove_ipv6(host):
 def is_localhost_ip(ip):
     localhost_ips = ['127.0.0.1', '::1']
     return ip in localhost_ips
+
+import ipaddress
+
+def is_ip_address(hostname):
+    try:
+        ipaddress.ip_address(hostname)
+        return True
+    except ValueError:
+        return False
 
 def is_ipv6(ip):
     try:
@@ -54,9 +63,12 @@ def get_host_ip(hostname):
     addresses = get_ip_addresses(hostname)
     for addr in addresses:
         if is_ipv6(addr):
+            logger.debug(f"Host:{hostname} - IPv6: {addr}")  
             return addr
     if len(addresses)>0:
+        logger.debug(f"Host:{hostname} - IPv4: {addr}")  
         return addresses[0]
+    return None
     
 def get_ip_addresses(hostname):
     try:

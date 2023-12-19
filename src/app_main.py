@@ -4,7 +4,7 @@ version: 1.0
 Author: 
 Date: 2023-12-17 18:49:18
 LastEditors: linweifu
-LastEditTime: 2023-12-19 21:04:30
+LastEditTime: 2023-12-20 05:43:57
 '''
 import logging
 import logging.config
@@ -32,7 +32,7 @@ def my_task():
     # 执行你的定时任务逻辑
     logger.info(f"开始抓取列表共{len(SUBSCRIP_LIST)}个")
     results = []
-    num_threads = 5
+    num_threads = MAX_THREADS_NUM
     # 抓取频道
     with concurrent.futures.ThreadPoolExecutor(max_workers=num_threads) as executor:
         futures = []
